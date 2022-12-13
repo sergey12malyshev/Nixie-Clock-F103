@@ -43,6 +43,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <stdbool.h> 
 #include "ds18b20.h"
 /* USER CODE END Includes */
 
@@ -68,7 +69,7 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 
-
+bool flag, flag2 = 0;
 
 uint8_t ex=0;
 uint8_t a=0;
@@ -98,107 +99,108 @@ static void MX_USART1_UART_Init(void);
 static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
 
-void cifra( int a)
+void setNumber (int number)
 {
-	switch(a){
-		case 0: 
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);
-		break;
-			case 1:
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);				
-		break;
-			case 2: 
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);
-		break;
-			case 3:
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);				
-		break;
-			case 4: 
-				HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);
-		break;
-			case 5: 
-				HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);
-		break;
-			case 6: 
-				HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);
-		break;
-			case 7: 
-				HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);;
-		break;
-			case 8:
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_SET);				
-		break;
-			case 9: 
-				HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_SET);
-		break;
-		
-		}
+  switch(number)
+  {
+    case 0: 
+	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);
+	  break;
+	case 1:
+	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);				
+	  break;
+	case 2: 
+	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);
+	  break;
+	case 3:
+	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);				
+	  break;
+	case 4: 
+	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);
+	  break;
+	case 5: 
+	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);
+	  break;
+	case 6: 
+	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);
+	  break;
+	case 7: 
+	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_RESET);;
+	  break;
+	case 8:
+	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_SET);				
+	  break;
+	case 9: 
+	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D12_GPIO_Port,D12_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D11_GPIO_Port,D11_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D10_GPIO_Port,D10_Pin, GPIO_PIN_SET);
+	  break;		
+  }
 }
 
-void pol( int b)
+void setPosition (int position)
 {
-	switch(b){
-		case 0: 
-			HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D5_GPIO_Port,D5_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D4_GPIO_Port,D4_Pin, GPIO_PIN_RESET);
-		break;
-			case 1:
-			HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D5_GPIO_Port,D5_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D4_GPIO_Port,D4_Pin, GPIO_PIN_RESET);		
-		break;
-			case 2: 
-			HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D5_GPIO_Port,D5_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(D4_GPIO_Port,D4_Pin, GPIO_PIN_RESET);
-		break;
-			case 3:
-			HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D5_GPIO_Port,D5_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(D4_GPIO_Port,D4_Pin, GPIO_PIN_SET);				
-		break;
-		}
-	}
+  switch(position)
+  {
+    case 0: 
+	  HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D5_GPIO_Port,D5_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D4_GPIO_Port,D4_Pin, GPIO_PIN_RESET);
+	  break;
+	case 1:
+	  HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D5_GPIO_Port,D5_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D4_GPIO_Port,D4_Pin, GPIO_PIN_RESET);		
+	  break;
+	case 2: 
+	  HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D5_GPIO_Port,D5_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(D4_GPIO_Port,D4_Pin, GPIO_PIN_RESET);
+	  break;
+	case 3:
+	  HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D5_GPIO_Port,D5_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(D4_GPIO_Port,D4_Pin, GPIO_PIN_SET);				
+	  break;
+  }
+}
 
-	void znach (int a, int b)          // функция вывода числа на индикатор
+	void setValue (int number, int position)          // функция вывода числа на индикатор
 	{
-		pol(b);
-		cifra(a);
+		setPosition(position);
+		setNumber(number);
 	}
 /* USER CODE END PFP */
 
@@ -206,28 +208,27 @@ void pol( int b)
 /* USER CODE BEGIN 0 */
 void time_out (void)
 {
-			znach( hour/10, 0);
-			DelayMicro(500);
-			znach( hour%10,1);
-			DelayMicro(500);	
-			znach(minit/10,2);
-			DelayMicro(500);
-			znach(minit%10,3);
-			DelayMicro(500);	
+  setValue(hour / 10, 0);
+  DelayMicro(500);
+  setValue(hour % 10, 1);
+  DelayMicro(500);	
+  setValue(minit / 10, 2);
+  DelayMicro(500);
+  setValue(minit % 10, 3);
+  DelayMicro(500);	
 }
 
 void temper_out (void)   // выполняеться за 2 мс
 {
-				// показ температуры
-		  int temper_int = temper * 100;	
-			znach( temper_int/1000,0);
-			DelayMicro(500);
-			znach((temper_int/100)%10,1);
-			DelayMicro(500);;	
-			znach((temper_int/10)%10,2);
-			DelayMicro(500);
-			//znach(temper_int%10,3);
-			DelayMicro(500);	
+  int temper_int = temper * 100;	
+  setValue( temper_int/1000,0);
+  DelayMicro(500);
+  setValue((temper_int/100)%10,1);
+  DelayMicro(500);	
+  setValue((temper_int/10)%10,2);
+  DelayMicro(500);
+  //setValue(temper_int%10,3);
+  DelayMicro(500);	
 }
 
 void smooth_transition_time (void)   // выполняеться за 280 мс
@@ -390,7 +391,7 @@ void smooth_transition_time (void)   // выполняеться за 280 мс
 				time_out ();		
 }
 
-void smooth_transition_temp (void)  
+void smooth_transition_temp(void)  
 {
 				time_out();
 				temper_out();
@@ -550,6 +551,30 @@ void smooth_transition_temp (void)
 				temper_out();
 }
 
+void timeDataOutput(void)  
+{
+	flag2 = 0;
+	if (flag == 0)   // 200-250 мС https://habr.com/ru/post/431868/
+	{
+	   smooth_transition_time();
+	   flag = 1;
+	}
+	else
+	{
+	  temper_out();
+	}	
+}
+
+void tempDataOutput(void)  
+{
+    flag = 0;
+    if (flag2 == 0)   // 200-250 мС https://habr.com/ru/post/431868/
+	{
+	  smooth_transition_temp();
+	  flag2 = 1;
+	}
+	else time_out();
+}
 /* USER CODE END 0 */
 
 /**
@@ -562,8 +587,7 @@ int main(void)
 	uint8_t status;
 	uint8_t dt[8];
 	uint16_t raw_temper;
-	char c;
-	int i,i2 =0;
+
 	
 	uint16_t ms_4 = 0;
   /* USER CODE END 1 */
@@ -590,29 +614,26 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 	
-	HAL_UART_Transmit(&huart1,hello_clock,14,1000);
+  HAL_UART_Transmit(&huart1, hello_clock, 14, 1000);
 	
-	port_init();
-	status = ds18b20_init(SKIP_ROM);
-	sprintf(str1,"Init Status: %d\r\n",status);
-	HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
+  port_init();
+  status = ds18b20_init(SKIP_ROM);
+  sprintf(str1,"Init Status: %d\r\n",status);
+  HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), 0x1000);
 	
-		RTC_DateTypeDef RTC_Date;                     
-		RTC_TimeTypeDef RTC_Time;                     
+  RTC_DateTypeDef RTC_Date;                     
+  RTC_TimeTypeDef RTC_Time;                     
+
+  HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
+  hour = RTC_Time.Hours;
+  minit = RTC_Time.Minutes;
+  secund = RTC_Time.Seconds;
 		
-	//	RTC_AlarmTypeDef RTC_Alarm_Time;  // Будильник
-	//	RTC_DateTypeDef RTC_Date;        // Дата
-		HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
-		hour= RTC_Time.Hours;
-		minit=RTC_Time.Minutes;
-		secund=RTC_Time.Seconds;
-		
-	
-		ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
-		HAL_Delay (750);
-		ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
-		raw_temper = ((uint16_t)dt[1]<<8)|dt[0];
-		temper = ds18b20_Convert(raw_temper);
+  ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
+  HAL_Delay (750);
+  ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
+  raw_temper = ((uint16_t)dt[1]<<8)|dt[0];
+  temper = ds18b20_Convert(raw_temper);
 								
   /* USER CODE END 2 */
 
@@ -624,41 +645,25 @@ int main(void)
 			//Внимание!! при генерации кода в кубе - стирается коментирование в инициалзации  MX_RTC_Init() 
 		//- чтоб робило закоменитить установку времени и даты чтоб при перзагрузке сохранялось
 		
-	  HAL_RTC_GetDate(&hrtc,&RTC_Date,RTC_FORMAT_BIN);
-		HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
+  HAL_RTC_GetDate(&hrtc,&RTC_Date,RTC_FORMAT_BIN);
+  HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
 		
 		
-		hour= RTC_Time.Hours;
-		minit=RTC_Time.Minutes;
-		secund=RTC_Time.Seconds;
+  hour = RTC_Time.Hours;
+  minit = RTC_Time.Minutes;
+  secund = RTC_Time.Seconds;
 		
-		if (((RTC_Time.Seconds>0)&&(RTC_Time.Seconds<5))||((RTC_Time.Seconds>20) \
-		&&(RTC_Time.Seconds<25))||((RTC_Time.Seconds>40)&&(RTC_Time.Seconds<45)))  
-		{	
-			i2 =0;
-			if (i == 0)   // 200-250 мС https://habr.com/ru/post/431868/
-			{
-				smooth_transition_time();
-				i=1;
-			}
-			else
-			{
-				temper_out();
-			}
-			
-		}
-		else                        // показ часы-минуты
-		{
-			i=0;
-			if (i2 == 0)   // 200-250 мС https://habr.com/ru/post/431868/
-			{
-				smooth_transition_temp();
-				i2 = 1;
-			}
-			else time_out ();
-		}
+  if (((RTC_Time.Seconds>0)&&(RTC_Time.Seconds<5))||((RTC_Time.Seconds>20) \
+  &&(RTC_Time.Seconds<25))||((RTC_Time.Seconds>40)&&(RTC_Time.Seconds<45)))  
+  {	
+    timeDataOutput();  
+  }
+  else                        
+  {
+    tempDataOutput();  
+  }
 				
-		if (timeSet0==1)  // Сброс в 0 по прерывани по кнопке
+		if (timeSet0 == 1)  // Сброс в 0 по прерывани по кнопке
 		{ 
 				HAL_Delay(25);
 
@@ -712,7 +717,7 @@ int main(void)
 		}
 			
 			
-if (((RTC_Time.Seconds>55)&&(RTC_Time.Seconds<0))||((RTC_Time.Seconds>15) \
+if (((RTC_Time.Seconds>55)&&(RTC_Time.Seconds<=0))||((RTC_Time.Seconds>15) \
 		&&(RTC_Time.Seconds<20))||((RTC_Time.Seconds>35)&&(RTC_Time.Seconds<40)))  
 {
 	if (ms_4 == 1)
@@ -800,10 +805,10 @@ static void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 0 */
 
   /* USER CODE END RTC_Init 0 */
-
+  /*
   RTC_TimeTypeDef sTime = {0};
   RTC_DateTypeDef DateToUpdate = {0};
-
+  */
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
