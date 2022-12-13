@@ -69,6 +69,9 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 
+RTC_DateTypeDef RTC_Date;                     
+RTC_TimeTypeDef RTC_Time;  
+
 bool flag, flag2 = 0;
 
 uint8_t ex=0;
@@ -640,8 +643,7 @@ int main(void)
   sprintf(str1,"Init Status: %d\r\n",status);
   HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), 0x1000);
 	
-  RTC_DateTypeDef RTC_Date;                     
-  RTC_TimeTypeDef RTC_Time;                     
+                   
 
   HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
   hour = RTC_Time.Hours;
@@ -684,7 +686,7 @@ int main(void)
 				
   if (timeSet0 == 1)  // Сброс в 0 по прерывани по кнопке
   { 
-    checkButtonResetTime(void)  
+    checkButtonResetTime();  
   }	
 				
   if ((HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14)== 0)) // установка минут
@@ -925,7 +927,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : D8_Pin D2_Pin D3_Pin */
   GPIO_InitStruct.Pin = D8_Pin|D2_Pin|D3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
