@@ -44,7 +44,9 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <stdbool.h> 
+#include "smooth.h"
 #include "ds18b20.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -94,7 +96,7 @@ uint8_t hello_clock []= "Hello Clock!\r\n";
 char str1[60];
 float temper;
 
-
+const uint8_t softWare_version = 1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -104,7 +106,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
 
-void setNumber (int number)
+void setNumber(uint8_t number)
 {
   switch(number)
   {
@@ -171,7 +173,7 @@ void setNumber (int number)
   }
 }
 
-void setPosition (int position)
+void setPosition (uint8_t position)
 {
   switch(position)
   {
@@ -202,11 +204,11 @@ void setPosition (int position)
   }
 }
 
-	void setValue (int number, int position)          // функция вывода числа на индикатор
-	{
-		setPosition(position);
-		setNumber(number);
-	}
+void setValue (uint8_t number, uint8_t position)          // функция вывода числа на индикатор
+{
+  setPosition(position);
+  setNumber(number);
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -236,361 +238,39 @@ void temper_out (void)   // выполняеться за 2 мс
   DelayMicro(500);	
 }
 
-void smooth_transition_time (void)   // выполняеться за 280 мс
-{
-				temper_out();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				
-				temper_out();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-
-				temper_out();
-				temper_out();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				
-				temper_out();
-				temper_out();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				
-				temper_out();
-				temper_out();
-				temper_out();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				time_out ();
-				time_out ();
-				time_out ();
-				time_out ();
-				
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				time_out ();
-				time_out ();
-				time_out ();
-				
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				time_out ();
-				time_out ();
-				
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				time_out ();
-				time_out ();
-
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				time_out ();
-				
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				time_out ();		
-}
-
-void smooth_transition_temp(void)  
-{
-				time_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				
-				time_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-
-				time_out();
-				time_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				
-				time_out();
-				time_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				
-				time_out();
-				time_out();
-				time_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				temper_out();
-				temper_out();
-				temper_out();
-				
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				temper_out();
-				temper_out();
-				
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				temper_out();
-				temper_out();
-
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				temper_out();
-				
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				time_out();
-				temper_out();
-}
-
 void timeDataOutput(void)  
 {
-	flag2 = 0;
-	if (flag == 0)   // 200-250 мС https://habr.com/ru/post/431868/
-	{
-	   smooth_transition_time();
-	   flag = 1;
-	}
-	else
-	{
-	  temper_out();
-	}	
+  flag2 = 0;
+  if (flag == 0)   // 200-250 мС https://habr.com/ru/post/431868/
+  {
+    smooth_transition_time();
+	flag = 1;
+  }
+  else
+  {
+    temper_out();
+  }	
 }
 
 void tempDataOutput(void)  
 {
-    flag = 0;
-    if (flag2 == 0)   // 200-250 мС https://habr.com/ru/post/431868/
-	{
-	  smooth_transition_temp();
-	  flag2 = 1;
-	}
-	else time_out();
+  flag = 0;
+  if (flag2 == 0)   // 200-250 мС https://habr.com/ru/post/431868/
+  {
+    smooth_transition_temp();
+	flag2 = 1;
+  }
+  else time_out();
 }
 
 void checkButtonResetTime(void)  
 {
+  uint16_t timeDelay = 1000;
+
   HAL_Delay(5);
   if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)== 0) 
   {
-	RTC_Time.Hours = 0x05;
-    RTC_Time.Minutes = 0x00;
-	RTC_Time.Seconds = 0x00;
-		
-	HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);			
+	while (--timeDelay)	temper_out();
   }
 
   timeSet0 = false;
@@ -670,17 +350,15 @@ int main(void)
   port_init();
   status = ds18b20_init(SKIP_ROM);
   sprintf(str1,"Init Status: %d\r\n",status);
-  HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), 0x1000);
+  HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), 0x200);
 	
-                   
-
   HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
   hour = RTC_Time.Hours;
   minit = RTC_Time.Minutes;
   secund = RTC_Time.Seconds;
 		
   ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
-  HAL_Delay (750);
+  HAL_Delay(750);
   ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
   raw_temper = ((uint16_t)dt[1]<<8)|dt[0];
   temper = ds18b20_Convert(raw_temper);
@@ -691,14 +369,15 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		// https://narodstream.ru/stm-urok-92-datchik-temperatury-ds18b20-chast-3/
-			//Внимание!! при генерации кода в кубе - стирается коментирование в инициалзации  MX_RTC_Init() 
-		//- чтоб робило закоменитить установку времени и даты чтоб при перзагрузке сохранялось
-		
+
+/* https://narodstream.ru/stm-urok-92-datchik-temperatury-ds18b20-chast-3/
+*  Внимание!! при генерации кода в кубе - стирается коментирование в инициалзации  MX_RTC_Init() 
+*  - для работы необходимо закомментировать установку времени и даты - для сохранения данных при потере питания
+*/		
+
   HAL_RTC_GetDate(&hrtc,&RTC_Date,RTC_FORMAT_BIN);
   HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
-		
-		
+			
   hour = RTC_Time.Hours;
   minit = RTC_Time.Minutes;
   secund = RTC_Time.Seconds;
@@ -744,7 +423,11 @@ int main(void)
 		temper = ds18b20_Convert(raw_temper);
 	}
 	ms_4++;
-  }	else ms_4 = 0; 
+  }	
+  else
+  {
+    ms_4 = 0;
+  }  
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

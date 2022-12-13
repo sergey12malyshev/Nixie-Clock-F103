@@ -106,7 +106,8 @@ void Error_Handler(void);
 #define D10_Pin GPIO_PIN_6
 #define D10_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-
+void temper_out(void);
+void time_out(void);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
