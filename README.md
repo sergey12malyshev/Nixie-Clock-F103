@@ -6,9 +6,14 @@ Nixie Clock project stm32f103
 <img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1670937612194.jpg" width=25% height=25%> 
 <img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1670937612155.jpg" width=25% height=25%> 
 
+## Управление
+- Кнопка 1 - Настройка минут
+- Кнопка 2 - Показ температуры на 2 сек.
+- Кнопка 3 - Настройка часов
+
 Внимание!! При генерации кода в CubeMX стирается коментирование в инициалзации  MX_RTC_Init. Для сохранения времени при потере питания необходимо закомментировать установку времени и даты.
 
-# Полезная информация
+## Полезная информация
 https://narodstream.ru/stm-urok-92-datchik-temperatury-ds18b20-chast-3/
 
 https://habr.com/ru/post/431868/
