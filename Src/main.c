@@ -575,6 +575,25 @@ void tempDataOutput(void)
 	}
 	else time_out();
 }
+
+void checkButtonResetTime(void)  
+{
+  HAL_Delay(25);
+  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)== 0) 
+  {
+	RTC_Time.Hours = 0x05;
+    RTC_Time.Minutes = 0x00;
+	RTC_Time.Seconds = 0x00;
+		
+	HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
+				
+	timeSet0 = 0;
+  }
+  else
+  {
+	timeSet0 = 0;
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -663,63 +682,39 @@ int main(void)
     tempDataOutput();  
   }
 				
-		if (timeSet0 == 1)  // Сброс в 0 по прерывани по кнопке
-		{ 
-				HAL_Delay(25);
-
-				if (HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_15)==0) 
-				{
-				HAL_Delay(5);
+  if (timeSet0 == 1)  // Сброс в 0 по прерывани по кнопке
+  { 
+    checkButtonResetTime(void)  
+  }	
 				
-				RTC_Time.Hours=0x05;
-				RTC_Time.Minutes=0x00;
-				RTC_Time.Seconds=0x00;
+  if ((HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14)== 0)) // установка минут
+  { 
+    HAL_Delay(50);
+    if ((RTC_Time.Minutes < 59)&&(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14)== 0))
+    {
+      RTC_Time.Minutes++;
+      HAL_RTC_SetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
+	}
+    else
+    {
+      RTC_Time.Minutes = 0;
+	}
+  }
 		
-				HAL_Delay(5);
-				HAL_RTC_SetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
-				
-					timeSet0=0;
-			 }
-				else
-			 {
-					timeSet0=0;
-			 }
-		}	
-		
-			
-			if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_14)==0)) // установка минут
-			{ 
-				HAL_Delay(50);
-				if ((RTC_Time.Minutes<59)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_14)==0))
-				{
-				HAL_Delay(5);
-				RTC_Time.Minutes++;
-				HAL_Delay(5);
-				HAL_RTC_SetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
-				}
-				else
-				{
-					RTC_Time.Minutes=0;
-				}
-			}
-		
-			if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)==0))  // установка часов
-			{ 
-				HAL_Delay(50);
-				
-				if ((RTC_Time.Hours<24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)==0))
-				{
-				HAL_Delay(5);
-				RTC_Time.Hours++;
-				HAL_Delay(5);
-				HAL_RTC_SetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
-			}	
-		}
+   if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))  // установка часов
+   { 
+	  HAL_Delay(50);		
+      if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))
+	  {
+		RTC_Time.Hours++;
+		HAL_RTC_SetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
+	  }	
+   }
 			
 			
-if (((RTC_Time.Seconds>55)&&(RTC_Time.Seconds<=0))||((RTC_Time.Seconds>15) \
+  if (((RTC_Time.Seconds>55)&&(RTC_Time.Seconds<=0))||((RTC_Time.Seconds>15) \
 		&&(RTC_Time.Seconds<20))||((RTC_Time.Seconds>35)&&(RTC_Time.Seconds<40)))  
-{
+  {
 	if (ms_4 == 1)
 	{
 		ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
@@ -728,19 +723,11 @@ if (((RTC_Time.Seconds>55)&&(RTC_Time.Seconds<=0))||((RTC_Time.Seconds>15) \
 	if (ms_4 == 600)
 	{
 		ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
-		//sprintf(str1,"STRATHPAD: %02X %02X %02X %02X %02X %02X %02X %02X; ",
-		//dt[0], dt[1], dt[2], dt[3], dt[4], dt[5], dt[6], dt[7]);
-		//HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
 		raw_temper = ((uint16_t)dt[1]<<8)|dt[0];
-		//if(ds18b20_GetSign(raw_temper)) c='-';
-		//else c='+';
 		temper = ds18b20_Convert(raw_temper);
-		//sprintf(str1,"Raw t: 0x%04X; t: %c%.2f\r\n", raw_temper, c, temper);
-		//HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
 	}
-	
 	ms_4++;
-}	else ms_4 = 0; 
+  }	else ms_4 = 0; 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
