@@ -81,12 +81,14 @@ uint8_t sec2=0;
 uint8_t min=0;
 uint8_t min2=0;
 
-uint8_t nastrM =0;
-uint8_t timeSet0 =0;
+bool setHoursButton = false;
+bool setMinitButton = false;
+bool timeSet0 = false;
+
 uint8_t hour;
 uint8_t minit;
 uint8_t secund;
-uint8_t counter =0;
+uint8_t counter = 0;
 
 uint8_t hello_clock []= "Hello Clock!\r\n";
 char str1[60];
@@ -581,21 +583,48 @@ void tempDataOutput(void)
 
 void checkButtonResetTime(void)  
 {
-  HAL_Delay(25);
+  HAL_Delay(5);
   if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)== 0) 
   {
 	RTC_Time.Hours = 0x05;
     RTC_Time.Minutes = 0x00;
 	RTC_Time.Seconds = 0x00;
 		
-	HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
-				
-	timeSet0 = 0;
+	HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);			
   }
-  else
+
+  timeSet0 = false;
+}
+
+void checkButtonSetHours(void)  
+{
+  HAL_Delay(5);		
+  if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))
   {
-	timeSet0 = 0;
+   RTC_Time.Hours++;
+   HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
   }
+
+   setHoursButton = false;	
+}
+
+void checkButtonSetMinutes(void)  
+{
+  HAL_Delay(5);
+  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14)== 0)
+  {
+    if ((RTC_Time.Minutes < 59))
+    {
+      RTC_Time.Minutes++;
+      HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
+    }
+    else
+    {
+      RTC_Time.Minutes = 0;
+	  HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
+    }
+  }
+  setMinitButton = false;
 }
 /* USER CODE END 0 */
 
@@ -684,33 +713,19 @@ int main(void)
     tempDataOutput();  
   }
 				
-  if (timeSet0 == 1)  // Сброс в 0 по прерывани по кнопке
+  if (timeSet0 == true)  // Сброс в 0 по прерывани по кнопке
   { 
     checkButtonResetTime();  
   }	
 				
-  if ((HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14)== 0)) // установка минут
+  if (setMinitButton == true) // установка минут
   { 
-    HAL_Delay(50);
-    if ((RTC_Time.Minutes < 59)&&(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14)== 0))
-    {
-      RTC_Time.Minutes++;
-      HAL_RTC_SetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
-	}
-    else
-    {
-      RTC_Time.Minutes = 0;
-	}
+    checkButtonSetMinutes();
   }
 		
-   if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))  // установка часов
+   if (setHoursButton == true)  // установка часов
    { 
-	  HAL_Delay(50);		
-      if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))
-	  {
-		RTC_Time.Hours++;
-		HAL_RTC_SetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
-	  }	
+     checkButtonSetHours();
    }
 			
 			

@@ -38,6 +38,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdbool.h> 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,8 +58,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-	extern uint8_t nastrM;
-	extern uint8_t timeSet0;
+	extern bool setHoursButton;
+  extern bool setMinitButton;
+	extern bool timeSet0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -236,7 +238,11 @@ void EXTI3_IRQHandler(void)
   /* USER CODE END EXTI3_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
   /* USER CODE BEGIN EXTI3_IRQn 1 */
-	nastrM=1;
+  if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))
+  {
+    setHoursButton = true;
+  }
+	
   /* USER CODE END EXTI3_IRQn 1 */
 }
 
@@ -251,9 +257,14 @@ void EXTI15_10_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_15);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
-if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_15)==0))
+  if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_15)== 0))
 	{
-		 timeSet0=1;
+		timeSet0 = true;
+	}
+
+  if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_14)== 0))
+	{
+		setMinitButton = true;
 	}
   /* USER CODE END EXTI15_10_IRQn 1 */
 }
