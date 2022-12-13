@@ -42,6 +42,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 #include "ds18b20.h"
 /* USER CODE END Includes */
 
