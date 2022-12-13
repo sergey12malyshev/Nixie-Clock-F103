@@ -30,3 +30,5 @@ SET CPU_CLOCK=0x007A1200
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via "clock-f103\stm32f1xx_hal_uart.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmLink" --Via "Clock-f103\Clock-f103.lnp"
 "C:\Keil_v5\ARM\ARMCC\Bin\fromelf.exe" "Clock-f103\Clock-f103.axf" --i32combined --output "Clock-f103\Clock-f103.hex"
+
+pause

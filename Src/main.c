@@ -42,7 +42,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "ds18b20.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -96,13 +96,6 @@ static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
-
-__STATIC_INLINE void DelayMicro(__IO uint32_t micros)
-{
-micros *= (SystemCoreClock / 1000000) / 9;
-/* Wait till done */
-while (micros--) ;
-}
 
 void cifra( int a)
 {

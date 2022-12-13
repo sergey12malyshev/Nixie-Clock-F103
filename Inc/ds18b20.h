@@ -14,6 +14,13 @@
 #define RESOLUTION_11BIT 0x5F
 #define RESOLUTION_12BIT 0x7F
 //--------------------------------------------------
+__STATIC_INLINE void DelayMicro(__IO uint32_t micros)
+{
+micros *= (SystemCoreClock / 1000000) / 9;
+/* Wait till done */
+while (micros--) ;
+}
+//--------------------------------------------------
 void port_init(void);
 uint8_t ds18b20_init(uint8_t mode);
 void ds18b20_MeasureTemperCmd(uint8_t mode, uint8_t DevNum);
