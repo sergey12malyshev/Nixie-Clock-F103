@@ -76,21 +76,11 @@ RTC_TimeTypeDef RTC_Time;
 
 bool flag, flag2 = 0;
 
-uint8_t ex=0;
-uint8_t a=0;
-uint8_t b=0;
-uint8_t sec2=0;
-uint8_t min=0;
-uint8_t min2=0;
-
 bool setHoursButton = false;
 bool setMinitButton = false;
 bool timeSet0 = false;
 
-uint8_t hour;
-uint8_t minit;
-uint8_t secund;
-uint8_t counter = 0;
+uint8_t hour, minit, secund;
 
 uint8_t hello_clock []= "Hello Clock!\r\n";
 char str1[60];
@@ -318,8 +308,6 @@ int main(void)
 	uint8_t status;
 	uint8_t dt[8];
 	uint16_t raw_temper;
-
-	
 	uint16_t ms_4 = 0;
   /* USER CODE END 1 */
 
@@ -382,8 +370,8 @@ int main(void)
   minit = RTC_Time.Minutes;
   secund = RTC_Time.Seconds;
 		
-  if (((RTC_Time.Seconds>0)&&(RTC_Time.Seconds<5))||((RTC_Time.Seconds>20) \
-  &&(RTC_Time.Seconds<25))||((RTC_Time.Seconds>40)&&(RTC_Time.Seconds<45)))  
+  if (((RTC_Time.Seconds > 0)&&(RTC_Time.Seconds < 5))||((RTC_Time.Seconds > 20) \
+  &&(RTC_Time.Seconds < 25))||((RTC_Time.Seconds > 40)&&(RTC_Time.Seconds < 45)))  
   {	
     timeDataOutput();  
   }
@@ -408,8 +396,8 @@ int main(void)
    }
 			
 			
-  if (((RTC_Time.Seconds>55)&&(RTC_Time.Seconds<=0))||((RTC_Time.Seconds>15) \
-		&&(RTC_Time.Seconds<20))||((RTC_Time.Seconds>35)&&(RTC_Time.Seconds<40)))  
+  if (((RTC_Time.Seconds > 55)&&(RTC_Time.Seconds <= 0))||((RTC_Time.Seconds > 15) \
+		&&(RTC_Time.Seconds < 20))||((RTC_Time.Seconds > 35)&&(RTC_Time.Seconds < 40)))  
   {
 	if (ms_4 == 1)
 	{
@@ -419,7 +407,7 @@ int main(void)
 	if (ms_4 == 600)
 	{
 		ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
-		raw_temper = ((uint16_t)dt[1]<<8)|dt[0];
+		raw_temper = ((uint16_t)dt[1] << 8)|dt[0];
 		temper = ds18b20_Convert(raw_temper);
 	}
 	ms_4++;
