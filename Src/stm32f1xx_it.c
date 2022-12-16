@@ -61,6 +61,9 @@
 	extern bool setHoursButton;
   extern bool setMinitButton;
 	extern bool timeSetButton;
+  uint32_t time_exti3_irq;
+  uint32_t time_exti15_irq; 
+  
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -240,7 +243,9 @@ void EXTI3_IRQHandler(void)
   /* USER CODE BEGIN EXTI3_IRQn 1 */
   if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))
   {
+    HAL_NVIC_DisableIRQ(EXTI3_IRQn); 
     setHoursButton = true;
+    time_exti3_irq = HAL_GetTick();
   }
 	
   /* USER CODE END EXTI3_IRQn 1 */
@@ -259,12 +264,16 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
   if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_15)== 0))
 	{
+    HAL_NVIC_DisableIRQ(EXTI15_10_IRQn); 
 		timeSetButton = true;
+    time_exti15_irq = HAL_GetTick();
 	}
 
   if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_14)== 0))
 	{
+    HAL_NVIC_DisableIRQ(EXTI15_10_IRQn); 
 		setMinitButton = true;
+    time_exti15_irq = HAL_GetTick();
 	}
   /* USER CODE END EXTI15_10_IRQn 1 */
 }

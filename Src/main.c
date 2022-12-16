@@ -79,6 +79,9 @@ bool flag, flag2 = false;
 bool setHoursButton = false;
 bool setMinitButton = false;
 bool timeSetButton = false;
+extern uint32_t time_exti3_irq;
+extern uint32_t time_exti15_irq; 
+const uint8_t antiChatter_ms = 45; // https://istarik.ru/blog/stm32/148.html
 
 uint8_t hour, minit, secund;
 
@@ -270,45 +273,62 @@ static void checkButtonTemp(void)
 {
   uint16_t timeDelay = 950;
 
-  HAL_Delay(5);
-  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)== 0) 
+  if((HAL_GetTick() - time_exti15_irq) > antiChatter_ms)
   {
-    smooth_transition_time();
-	  while (--timeDelay)	temper_out();
-    smooth_transition_temp();
-  }
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)== 0) 
+    {
+      smooth_transition_time();
+	    while (--timeDelay)	temper_out();
+      smooth_transition_temp();
+    }
 
-  timeSetButton = false;
+    timeSetButton = false;
+    __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_15); 
+    NVIC_ClearPendingIRQ(EXTI15_10_IRQn); 
+    HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);  
+  } 
 }
 
 static void checkButtonSetHours(void)  
 {
-  HAL_Delay(5);		
-  if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))
+  if((HAL_GetTick() - time_exti3_irq) > antiChatter_ms)
   {
-   RTC_Time.Hours++;
-   HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
-  }
-   setHoursButton = false;	
+    if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))
+    {
+     RTC_Time.Hours++;
+     HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
+    }
+  
+    setHoursButton = false;	
+    __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_3); 
+    NVIC_ClearPendingIRQ(EXTI3_IRQn); 
+    HAL_NVIC_EnableIRQ(EXTI3_IRQn);  
+  } 
 }
 
 static void checkButtonSetMinutes(void)  
 {
-  HAL_Delay(5);
-  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14)== 0)
+  if((HAL_GetTick() - time_exti15_irq) > antiChatter_ms)
   {
-    if ((RTC_Time.Minutes < 59))
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14)== 0)
     {
-      RTC_Time.Minutes++;
-      HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
-    }
-    else
-    {
-      RTC_Time.Minutes = 0;
-	  HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
-    }
+      if ((RTC_Time.Minutes < 59))
+      {
+        RTC_Time.Minutes++;
+        HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
+      }
+      else
+      {
+        RTC_Time.Minutes = 0;
+	      HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
+      }
+    } 
+  
+    setMinitButton = false;
+    __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_14);  // очищаем бит EXTI_PR
+    NVIC_ClearPendingIRQ(EXTI15_10_IRQn); // очищаем бит NVIC_ICPRx
+    HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);   // включаем внешнее прерывание
   }
-  setMinitButton = false;
 }
 /* USER CODE END 0 */
 
