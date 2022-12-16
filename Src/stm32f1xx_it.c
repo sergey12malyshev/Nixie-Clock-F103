@@ -60,7 +60,7 @@
 /* USER CODE BEGIN PV */
 	extern bool setHoursButton;
   extern bool setMinitButton;
-	extern bool timeSet0;
+	extern bool timeSetButton;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -259,7 +259,7 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
   if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_15)== 0))
 	{
-		timeSet0 = true;
+		timeSetButton = true;
 	}
 
   if ((HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_14)== 0))

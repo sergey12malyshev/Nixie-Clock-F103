@@ -74,15 +74,15 @@ UART_HandleTypeDef huart1;
 RTC_DateTypeDef RTC_Date;                     
 RTC_TimeTypeDef RTC_Time;  
 
-bool flag, flag2 = 0;
+bool flag, flag2 = false;
 
 bool setHoursButton = false;
 bool setMinitButton = false;
-bool timeSet0 = false;
+bool timeSetButton = false;
 
 uint8_t hour, minit, secund;
 
-uint8_t hello_clock []= "Hello Clock!\r\n";
+const uint8_t hello_clock []= "Hello Clock!\r\n";
 char str1[60];
 float temper;
 
@@ -96,7 +96,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
 
-void setNumber(uint8_t number)
+static void setNumber(uint8_t number)
 {
   switch(number)
   {
@@ -163,7 +163,7 @@ void setNumber(uint8_t number)
   }
 }
 
-void setPosition (uint8_t position)
+static void setPosition(uint8_t position)
 {
   switch(position)
   {
@@ -194,7 +194,15 @@ void setPosition (uint8_t position)
   }
 }
 
-void setValue (uint8_t number, uint8_t position)          // функция вывода числа на индикатор
+static void setVoidPosition(void)
+{
+  HAL_GPIO_WritePin(D7_GPIO_Port,D7_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(D6_GPIO_Port,D6_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(D5_GPIO_Port,D5_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(D4_GPIO_Port,D4_Pin, GPIO_PIN_RESET);	
+}
+
+static void setValue(uint8_t number, uint8_t position)          // функция вывода числа на индикатор
 {
   setPosition(position);
   setNumber(number);
@@ -203,7 +211,7 @@ void setValue (uint8_t number, uint8_t position)          // функция вы
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void time_out (void)
+void time_out(void)
 {
   setValue(hour / 10, 0);
   DelayMicro(500);
@@ -215,20 +223,25 @@ void time_out (void)
   DelayMicro(500);	
 }
 
-void temper_out (void)   // выполняеться за 2 мс
+void temper_out(void)   // выполняеться за 2 мс
 {
   int temper_int = temper * 100;	
-  setValue( temper_int/1000,0);
+  setValue( temper_int/1000, 0);
   DelayMicro(500);
-  setValue((temper_int/100)%10,1);
+  setValue((temper_int/100)%10, 1);
   DelayMicro(500);	
-  setValue((temper_int/10)%10,2);
+  setValue((temper_int/10)%10, 2);
   DelayMicro(500);
-  //setValue(temper_int%10,3);
-  DelayMicro(500);	
+#if 0
+  setValue(temper_int%10,3);
+#else
+  setVoidPosition();  
+#endif
+  DelayMicro(500);
+	
 }
 
-void timeDataOutput(void)  
+static void timeDataOutput(void)  
 {
   flag2 = 0;
   if (flag == 0)   // 200-250 мС https://habr.com/ru/post/431868/
@@ -242,7 +255,7 @@ void timeDataOutput(void)
   }	
 }
 
-void tempDataOutput(void)  
+static void tempDataOutput(void)  
 {
   flag = 0;
   if (flag2 == 0)   // 200-250 мС https://habr.com/ru/post/431868/
@@ -253,20 +266,22 @@ void tempDataOutput(void)
   else time_out();
 }
 
-void checkButtonResetTime(void)  
+static void checkButtonTemp(void)  
 {
-  uint16_t timeDelay = 1000;
+  uint16_t timeDelay = 950;
 
   HAL_Delay(5);
   if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)== 0) 
   {
-	while (--timeDelay)	temper_out();
+    smooth_transition_time();
+	  while (--timeDelay)	temper_out();
+    smooth_transition_temp();
   }
 
-  timeSet0 = false;
+  timeSetButton = false;
 }
 
-void checkButtonSetHours(void)  
+static void checkButtonSetHours(void)  
 {
   HAL_Delay(5);		
   if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))
@@ -274,11 +289,10 @@ void checkButtonSetHours(void)
    RTC_Time.Hours++;
    HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
   }
-
    setHoursButton = false;	
 }
 
-void checkButtonSetMinutes(void)  
+static void checkButtonSetMinutes(void)  
 {
   HAL_Delay(5);
   if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14)== 0)
@@ -333,14 +347,14 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 	
-  HAL_UART_Transmit(&huart1, hello_clock, 14, 1000);
+  HAL_UART_Transmit(&huart1, (uint8_t*)hello_clock, 14, 1000);
 	
   port_init();
   status = ds18b20_init(SKIP_ROM);
   sprintf(str1,"Init Status: %d\r\n",status);
   HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), 0x200);
 	
-  HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
+  HAL_RTC_GetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
   hour = RTC_Time.Hours;
   minit = RTC_Time.Minutes;
   secund = RTC_Time.Seconds;
@@ -380,9 +394,9 @@ int main(void)
     tempDataOutput();  
   }
 				
-  if (timeSet0 == true)  // Сброс в 0 по прерывани по кнопке
+  if (timeSetButton == true)  // показ температуры
   { 
-    checkButtonResetTime();  
+    checkButtonTemp();  
   }	
 				
   if (setMinitButton == true) // установка минут
