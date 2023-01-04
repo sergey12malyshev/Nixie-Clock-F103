@@ -9,6 +9,9 @@ Nixie Clock project stm32f103 + ds18b20
 ## Инструментарий
 *Keil uVision v5* + *VS Code*
 
+## RTOS
+Суперцикл
+
 ## Сборка
 Запустить **Clock-f103.BAT**
 
