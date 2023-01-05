@@ -4,7 +4,6 @@ Nixie Clock project stm32f103 + ds18b20
 
 <img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1670937612205.jpg" width=25% height=25%> 
 <img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1670937612194.jpg" width=25% height=25%> 
-<img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1670937612155.jpg" width=25% height=25%> 
 
 ## Инструментарий
 *Keil uVision v5* + *VS Code*
