@@ -246,11 +246,11 @@ void temper_out(void)   // выполняеться за 2 мс
 
 static void timeDataOutput(void)  
 {
-  flag2 = 0;
-  if (flag == 0)   // 200-250 мС https://habr.com/ru/post/431868/
+  flag2 = false;
+  if (flag == false)   // 200-250 мС https://habr.com/ru/post/431868/
   {
     smooth_transition_time();
-	flag = 1;
+	flag = true;
   }
   else
   {
@@ -260,11 +260,11 @@ static void timeDataOutput(void)
 
 static void tempDataOutput(void)  
 {
-  flag = 0;
-  if (flag2 == 0)   // 200-250 мС https://habr.com/ru/post/431868/
+  flag = false;
+  if (flag2 == false)   // 200-250 мС https://habr.com/ru/post/431868/
   {
     smooth_transition_temp();
-	flag2 = 1;
+	flag2 = true;
   }
   else time_out();
 }
