@@ -418,6 +418,11 @@
               <FileType>1</FileType>
               <FilePath>..\Src\smooth.c</FilePath>
             </File>
+            <File>
+              <FileName>driverNixeTube.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\driverNixeTube.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
