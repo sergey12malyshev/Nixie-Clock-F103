@@ -1,6 +1,10 @@
 #include "main.h"
 #include "smooth.h"
 
+/*
+  Для эффекта плавного перехода между показаниями время <-> температура
+*/
+
 static void output(uint8_t temper_cnt)
 {
   const uint8_t period = 10;

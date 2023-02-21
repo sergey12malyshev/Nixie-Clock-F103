@@ -86,8 +86,11 @@ const uint8_t antiChatter_ms = 45; // https://istarik.ru/blog/stm32/148.html
 uint8_t hour, minit, secund;
 
 const uint8_t hello_clock []= "Hello Clock!\r\n";
-char str1[60];
+char str1[30];
+
 float temper;
+uint8_t dt[8];
+uint16_t raw_temper;
 
 const uint8_t softWare_version = 1;
 /* USER CODE END PV */
@@ -229,7 +232,7 @@ void time_out(void)
 void temper_out(void)   // выполняеться за 2 мс
 {
   int temper_int = temper * 100;	
-  setValue( temper_int/1000, 0);
+  setValue(temper_int/1000, 0);
   DelayMicro(500);
   setValue((temper_int/100)%10, 1);
   DelayMicro(500);	
@@ -330,6 +333,28 @@ static void checkButtonSetMinutes(void)
     HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);     // включаем внешнее прерывание
   }
 }
+
+static void read_DS18b20_process(void)
+{
+  static uint16_t ms_4;
+
+	if (ms_4 == 1)
+	{
+		ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
+	}
+	
+	if (ms_4 == 600)
+	{
+		ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
+		raw_temper = ((uint16_t)dt[1] << 8)|dt[0];
+		temper = ds18b20_Convert(raw_temper);
+	}
+	if (ms_4 == 800)
+  {
+    ms_4 = 0;
+  }
+  ms_4++;
+}
 /* USER CODE END 0 */
 
 /**
@@ -340,9 +365,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	uint8_t status;
-	uint8_t dt[8];
-	uint16_t raw_temper;
-	uint16_t ms_4 = 0;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -391,15 +414,15 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-/* https://narodstream.ru/stm-urok-92-datchik-temperatury-ds18b20-chast-3/
+/* 
 *  Внимание!! при генерации кода в кубе - стирается коментирование в инициалзации  MX_RTC_Init() 
 *  - для работы необходимо закомментировать установку времени и даты - для сохранения данных при потере питания
 */		
-
+#if DATE
   HAL_RTC_GetDate(&hrtc,&RTC_Date,RTC_FORMAT_BIN);
+#endif
   HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
-			
+ 	
   hour = RTC_Time.Hours;
   minit = RTC_Time.Minutes;
   secund = RTC_Time.Seconds;
@@ -418,38 +441,21 @@ int main(void)
   { 
     checkButtonTemp();  
   }	
-				
   if (setMinitButton == true) // установка минут
   { 
     checkButtonSetMinutes();
   }
-		
-   if (setHoursButton == true)  // установка часов
-   { 
+  if (setHoursButton == true)  // установка часов
+  { 
      checkButtonSetHours();
-   }
+  }
 			
-			
-  if (((RTC_Time.Seconds > 55)&&(RTC_Time.Seconds <= 0))||((RTC_Time.Seconds > 15) \
-		&&(RTC_Time.Seconds < 20))||((RTC_Time.Seconds > 35)&&(RTC_Time.Seconds < 40)))  
+	/* Чтение датчика температуры происходит три раза в секунду */		
+  if (((RTC_Time.Seconds > 58)&&(RTC_Time.Seconds <= 0))||((RTC_Time.Seconds > 17) \
+		&&(RTC_Time.Seconds < 20))||((RTC_Time.Seconds > 37)&&(RTC_Time.Seconds < 40)))  
   {
-	if (ms_4 == 1)
-	{
-		ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
-	}
-	
-	if (ms_4 == 600)
-	{
-		ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
-		raw_temper = ((uint16_t)dt[1] << 8)|dt[0];
-		temper = ds18b20_Convert(raw_temper);
-	}
-	ms_4++;
+    read_DS18b20_process();
   }	
-  else
-  {
-    ms_4 = 0;
-  }  
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
