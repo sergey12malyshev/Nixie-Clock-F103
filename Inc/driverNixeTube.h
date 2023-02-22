@@ -3,4 +3,5 @@
 
 void setValue(uint8_t number, uint8_t position);
 void setVoidPosition(void);
+void enumeration(void);
 #endif /* DRV_API_H_ */

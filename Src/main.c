@@ -307,7 +307,7 @@ int main(void)
   secund = RTC_Time.Seconds;
 		
   ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
-  HAL_Delay(750);
+  enumeration(); //delay min 750 мс
   ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
   raw_temper = ((uint16_t)dt[1]<<8)|dt[0];
   temper = ds18b20_Convert(raw_temper);
