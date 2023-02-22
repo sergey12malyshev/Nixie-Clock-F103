@@ -94,7 +94,7 @@ float temper;
 uint8_t dt[8];
 uint16_t raw_temper;
 
-const uint8_t softWare_version = 1;
+const uint8_t softWare_version = 2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -242,6 +242,9 @@ static void read_DS18b20_process(void)
 	if (ms_4 == 800)
   {
     ms_4 = 0;
+    
+    sprintf(str1,"t,C: %f\r\n", temper);
+    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), 50);
   }
   ms_4++;
 }
@@ -280,12 +283,14 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 	
-  HAL_UART_Transmit(&huart1, (uint8_t*)hello_clock, 14, 1000);
+  HAL_UART_Transmit(&huart1, (uint8_t*)hello_clock, 14, 50);
+  sprintf(str1,"SoftWare ver.: %d\r\n", softWare_version);
+  HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), 50);
 	
   port_init();
   status = ds18b20_init(SKIP_ROM);
-  sprintf(str1,"Init Status: %d\r\n",status);
-  HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), 0x200);
+  sprintf(str1,"Init Status ds18b20: %d\r\n", status);
+  HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), 50);
 	
   HAL_RTC_GetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
   hour = RTC_Time.Hours;
