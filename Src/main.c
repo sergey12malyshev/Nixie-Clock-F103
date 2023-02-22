@@ -59,6 +59,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define BLOCK_DELAY_UART  50
+#define DEBUG             false
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -93,6 +94,8 @@ char str1[30];
 float temper;
 uint8_t dt[8];
 uint16_t raw_temper;
+
+static uint16_t count_2ms;
 
 const uint8_t softWare_version = 2;
 /* USER CODE END PV */
@@ -137,7 +140,7 @@ void temper_out(void)   // выполняеться за 2 мс
 	
 }
 
-static void timeDataOutput(void)  
+static void tempDataOutput(void)  
 {
   flag2 = false;
   if (flag == false)   // 200-250 мС https://habr.com/ru/post/431868/
@@ -151,7 +154,7 @@ static void timeDataOutput(void)
   }	
 }
 
-static void tempDataOutput(void)  
+static void timeDataOutput(void)  
 {
   flag = false;
   if (flag2 == false)   // 200-250 мС https://habr.com/ru/post/431868/
@@ -226,27 +229,33 @@ static void checkButtonSetMinutes(void)
 
 static void read_DS18b20_process(void)
 {
-  static uint16_t ms_4;
-
-	if (ms_4 == 1)
+	if (count_2ms == 1)
 	{
 		ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
 	}
-	
-	if (ms_4 == 600)
+	else if (count_2ms == 430) 
 	{
 		ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
 		raw_temper = ((uint16_t)dt[1] << 8)|dt[0];
 		temper = ds18b20_Convert(raw_temper);
 	}
-	if (ms_4 == 800)
+  else if (count_2ms == 500)
   {
-    ms_4 = 0;
-    
+#if DEBUG
     sprintf(str1,"t,C: %f\r\n", temper);
     HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART);
+    sprintf(str1,"s: %d\r\n", RTC_Time.Seconds);
+    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART);
+    sprintf(str1,"s: %d\r\n", count_2ms);
+    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART);
+#endif
   }
-  ms_4++;
+  count_2ms++;
+}
+
+static void resetValue_count_2ms(void)
+{
+  count_2ms = 0;
 }
 /* USER CODE END 0 */
 
@@ -325,11 +334,11 @@ int main(void)
   if (((RTC_Time.Seconds > 0)&&(RTC_Time.Seconds < 5))||((RTC_Time.Seconds > 20) \
   &&(RTC_Time.Seconds < 25))||((RTC_Time.Seconds > 40)&&(RTC_Time.Seconds < 45)))  
   {	
-    timeDataOutput();  
+    tempDataOutput();  
   }
   else                        
   {
-    tempDataOutput();  
+    timeDataOutput();  
   }
 				
   if (timeSetButton == true)  // показ температуры
@@ -345,11 +354,14 @@ int main(void)
      checkButtonSetHours();
   }
 			
-	/* Чтение датчика температуры происходит три раза в секунду */		
-  if (((RTC_Time.Seconds > 58)&&(RTC_Time.Seconds <= 0))||((RTC_Time.Seconds > 17) \
-		&&(RTC_Time.Seconds < 20))||((RTC_Time.Seconds > 37)&&(RTC_Time.Seconds < 40)))  
+	/* Чтение датчика температуры происходит три раза в минуту */		
+  if ((RTC_Time.Seconds == 19)||(RTC_Time.Seconds == 39)||(RTC_Time.Seconds == 59))
   {
     read_DS18b20_process();
+  }
+  else
+  {
+    resetValue_count_2ms();
   }	
     /* USER CODE END WHILE */
 
