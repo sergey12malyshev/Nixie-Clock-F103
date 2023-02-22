@@ -143,7 +143,7 @@ static void timeDataOutput(void)
   if (flag == false)   // 200-250 мС https://habr.com/ru/post/431868/
   {
     smooth_transition_time();
-	flag = true;
+	  flag = true;
   }
   else
   {
@@ -157,7 +157,7 @@ static void tempDataOutput(void)
   if (flag2 == false)   // 200-250 мС https://habr.com/ru/post/431868/
   {
     smooth_transition_temp();
-	flag2 = true;
+	  flag2 = true;
   }
   else time_out();
 }
@@ -188,8 +188,8 @@ static void checkButtonSetHours(void)
   {
     if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))
     {
-     RTC_Time.Hours++;
-     HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
+      RTC_Time.Hours++;
+      HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
     }
   
     setHoursButton = false;	
