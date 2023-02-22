@@ -68,6 +68,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+IWDG_HandleTypeDef hiwdg;
+
 RTC_HandleTypeDef hrtc;
 
 UART_HandleTypeDef huart1;
@@ -105,6 +107,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_RTC_Init(void);
+static void MX_IWDG_Init(void);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -290,6 +293,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_RTC_Init();
+  MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
 	
   HAL_UART_Transmit(&huart1, (uint8_t*)hello_clock, 14, BLOCK_DELAY_UART);
@@ -323,49 +327,51 @@ int main(void)
 *  - для работы необходимо закомментировать установку времени и даты - для сохранения данных при потере питания
 */		
 #if DATE
-  HAL_RTC_GetDate(&hrtc,&RTC_Date,RTC_FORMAT_BIN);
+    HAL_RTC_GetDate(&hrtc,&RTC_Date,RTC_FORMAT_BIN);
 #endif
-  HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
+    HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
  	
-  hour = RTC_Time.Hours;
-  minit = RTC_Time.Minutes;
-  secund = RTC_Time.Seconds;
+    hour = RTC_Time.Hours;
+    minit = RTC_Time.Minutes;
+    secund = RTC_Time.Seconds;
 		
-  if (((RTC_Time.Seconds > 0)&&(RTC_Time.Seconds < 5))||((RTC_Time.Seconds > 20) \
-  &&(RTC_Time.Seconds < 25))||((RTC_Time.Seconds > 40)&&(RTC_Time.Seconds < 45)))  
-  {	
-    tempDataOutput();  
-  }
-  else                        
-  {
-    timeDataOutput();  
-  }
+    if (((RTC_Time.Seconds > 0)&&(RTC_Time.Seconds < 5))||((RTC_Time.Seconds > 20) \
+    &&(RTC_Time.Seconds < 25))||((RTC_Time.Seconds > 40)&&(RTC_Time.Seconds < 45)))  
+    {	
+      tempDataOutput();  
+    }
+    else                        
+    {
+      timeDataOutput();  
+    }
 				
-  if (timeSetButton == true)  // показ температуры
-  { 
-    checkButtonTemp();  
-  }	
-  if (setMinitButton == true) // установка минут
-  { 
-    checkButtonSetMinutes();
-  }
-  if (setHoursButton == true)  // установка часов
-  { 
-     checkButtonSetHours();
-  }
+    if (timeSetButton == true)  // показ температуры
+    { 
+      checkButtonTemp();  
+    }	
+    if (setMinitButton == true) // установка минут
+    { 
+      checkButtonSetMinutes();
+    }
+    if (setHoursButton == true)  // установка часов
+    { 
+      checkButtonSetHours();
+    }
 			
-	/* Чтение датчика температуры происходит три раза в минуту */		
-  if ((RTC_Time.Seconds == 19)||(RTC_Time.Seconds == 39)||(RTC_Time.Seconds == 59))
-  {
-    read_DS18b20_process();
-  }
-  else
-  {
-    resetValue_count_2ms();
-  }	
+	  /* Чтение датчика температуры происходит три раза в минуту */		
+    if ((RTC_Time.Seconds == 19)||(RTC_Time.Seconds == 39)||(RTC_Time.Seconds == 59))
+    {
+      read_DS18b20_process();
+    }
+    else
+    {
+      resetValue_count_2ms();
+    }	
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+    HAL_IWDG_Refresh(&hiwdg);// 5 cекунд на зависание
   }
   /* USER CODE END 3 */
 }
@@ -383,11 +389,13 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE
+                              |RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
@@ -417,6 +425,34 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief IWDG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_IWDG_Init(void)
+{
+
+  /* USER CODE BEGIN IWDG_Init 0 */
+
+  /* USER CODE END IWDG_Init 0 */
+
+  /* USER CODE BEGIN IWDG_Init 1 */
+
+  /* USER CODE END IWDG_Init 1 */
+  hiwdg.Instance = IWDG;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_32;
+  hiwdg.Init.Reload = 4095;
+  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN IWDG_Init 2 */
+
+  /* USER CODE END IWDG_Init 2 */
+
+}
+
+/**
   * @brief RTC Initialization Function
   * @param None
   * @retval None
@@ -427,10 +463,10 @@ static void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 0 */
 
   /* USER CODE END RTC_Init 0 */
-  /*
+/*
   RTC_TimeTypeDef sTime = {0};
   RTC_DateTypeDef DateToUpdate = {0};
-  */
+*/
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
@@ -450,7 +486,8 @@ static void MX_RTC_Init(void)
 
   /** Initialize RTC and set the Time and Date
   */
- /*sTime.Hours = 0x12;
+ /*
+  sTime.Hours = 0x12;
   sTime.Minutes = 0x12;
   sTime.Seconds = 0x0;
 
@@ -467,7 +504,7 @@ static void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-	*/
+  */
   /* USER CODE BEGIN RTC_Init 2 */
 
   /* USER CODE END RTC_Init 2 */
