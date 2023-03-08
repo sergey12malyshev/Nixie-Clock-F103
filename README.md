@@ -17,7 +17,7 @@ Nixie Clock project stm32f103 + ds18b20 + ИН-14
 ## Прошивка ПО
 Запустить **programFlash.bat**
 
-## UART
+## UART/CLI
 Для PuTTY запустить **PuTTYstart.cmd**
 
 При включении в UART происходит выдача версии ПО и статус инициализации ds18b20. Во время работы происходит выдача в UART температуры
