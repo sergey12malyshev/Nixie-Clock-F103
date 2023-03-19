@@ -1,6 +1,5 @@
 #include "ds18b20.h"
 
-
 void port_init(void)
 {
   HAL_GPIO_DeInit(GPIOB, GPIO_PIN_11);
@@ -11,28 +10,29 @@ void port_init(void)
 
 static uint8_t ds18b20_Reset(void)
 {
-	uint16_t status;
+  uint16_t status;
 
-	GPIOB->ODR &= ~GPIO_ODR_ODR11;//ÌËÁÍËÈ ÛÓ‚ÂÌ¸
-  DelayMicro(485);//Á‡‰ÂÊÍ‡ Í‡Í ÏËÌËÏÛÏ Ì‡ 480 ÏËÍÓÒÂÍÛÌ‰
-  GPIOB->ODR |= GPIO_ODR_ODR11;//‚˚ÒÓÍËÈ ÛÓ‚ÂÌ¸
-  DelayMicro(65);//Á‡‰ÂÊÍ‡ Í‡Í ÏËÌËÏÛÏ Ì‡ 60 ÏËÍÓÒÂÍÛÌ‰
-  status = GPIOB->IDR & GPIO_IDR_IDR11;//ÔÓ‚ÂˇÂÏ ÛÓ‚ÂÌ¸
-  DelayMicro(500);//Á‡‰ÂÊÍ‡ Í‡Í ÏËÌËÏÛÏ Ì‡ 480 ÏËÍÓÒÂÍÛÌ‰
-  //(Ì‡ ‚ÒˇÍËÈ ÒÎÛ˜‡È ÔÓ‰ÓÊ‰∏Ï ÔÓ·ÓÎ¸¯Â, Ú‡Í Í‡Í ÏÓ„ÛÚ ·˚Ú¸ ÌÂÚÓ˜ÌÓÒÚË ‚ Á‡‰ÂÊÍÂ)
-  return (status ? 1 : 0);//‚ÂÌ∏Ï ÂÁÛÎ¸Ú‡Ú
+  GPIOB->ODR &= ~GPIO_ODR_ODR11; //–Ω–∏–∑–∫–∏–π —É—Ä–æ–≤–µ–Ω—å
+  DelayMicro(485); //–∑–∞–¥–µ—Ä–∂–∫–∞ –∫–∞–∫ –º–∏–Ω–∏–º—É–º –Ω–∞ 480 –º–∏–∫—Ä–æ—Å–µ–∫—É–Ω–¥
+  GPIOB->ODR |= GPIO_ODR_ODR11; //–≤—ã—Å–æ–∫–∏–π —É—Ä–æ–≤–µ–Ω—å
+  DelayMicro(65); //–∑–∞–¥–µ—Ä–∂–∫–∞ –∫–∞–∫ –º–∏–Ω–∏–º—É–º –Ω–∞ 60 –º–∏–∫—Ä–æ—Å–µ–∫—É–Ω–¥
+  status = GPIOB->IDR & GPIO_IDR_IDR11; //–ø—Ä–æ–≤–µ—Ä—è–µ–º —É—Ä–æ–≤–µ–Ω—å
+  DelayMicro(500); //–∑–∞–¥–µ—Ä–∂–∫–∞ –∫–∞–∫ –º–∏–Ω–∏–º—É–º –Ω–∞ 480 –º–∏–∫—Ä–æ—Å–µ–∫—É–Ω–¥
+   //(–Ω–∞ –≤—Å—è–∫–∏–π —Å–ª—É—á–∞–π –ø–æ–¥–æ–∂–¥—ë–º –ø–æ–±–æ–ª—å—à–µ, —Ç–∞–∫ –∫–∞–∫ –º–æ–≥—É—Ç –±—ã—Ç—å –Ω–µ—Ç–æ—á–Ω–æ—Å—Ç–∏ –≤ –∑–∞–¥–µ—Ä–∂–∫–µ)
+  return (status ? 1 : 0); //–≤–µ—Ä–Ω—ë–º —Ä–µ–∑—É–ª—å—Ç–∞—Ç
 }
 
 static uint8_t ds18b20_ReadBit(void)
 {
   uint8_t bit = 0;
 
-  GPIOB->ODR &= ~GPIO_ODR_ODR11;//ÌËÁÍËÈ ÛÓ‚ÂÌ¸
+  GPIOB->ODR &= ~GPIO_ODR_ODR11; //–Ω–∏–∑–∫–∏–π —É—Ä–æ–≤–µ–Ω—å
   DelayMicro(2);
-	GPIOB->ODR |= GPIO_ODR_ODR11;//‚˚ÒÓÍËÈ ÛÓ‚ÂÌ¸
-	DelayMicro(13);
-	bit = (GPIOB->IDR & GPIO_IDR_IDR11 ? 1 : 0);//ÔÓ‚ÂˇÂÏ ÛÓ‚ÂÌ¸	
-	DelayMicro(45);
+  GPIOB->ODR |= GPIO_ODR_ODR11; //–≤—ã—Å–æ–∫–∏–π —É—Ä–æ–≤–µ–Ω—å
+  DelayMicro(13);
+  bit = (GPIOB->IDR & GPIO_IDR_IDR11 ? 1 : 0); //–ø—Ä–æ–≤–µ—Ä—è–µ–º —É—Ä–æ–≤–µ–Ω—å	
+  DelayMicro(45);
+  
   return bit;
 }
 
@@ -42,6 +42,7 @@ static uint8_t ds18b20_ReadByte(void)
 
   for (uint8_t i = 0; i <= 7; i++)
   data += ds18b20_ReadBit() << i;
+
   return data;
 }
 
@@ -65,19 +66,22 @@ static void ds18b20_WriteByte(uint8_t dt)
 
 uint8_t ds18b20_init(uint8_t mode)
 {
-	if(ds18b20_Reset()) return 1;
+  if(ds18b20_Reset())
+  {
+    return 1;
+  }
   if(mode == SKIP_ROM)
   {
-		//SKIP ROM
-		ds18b20_WriteByte(0xCC);
-		//WRITE SCRATCHPAD
-		ds18b20_WriteByte(0x4E);
-		//TH REGISTER 100 „‡‰ÛÒÓ‚
-		ds18b20_WriteByte(0x64);
-		//TL REGISTER - 30 „‡‰ÛÒÓ‚
-		ds18b20_WriteByte(0x9E);
-		//Resolution 12 bit
-		ds18b20_WriteByte(RESOLUTION_12BIT);
+    //SKIP ROM
+    ds18b20_WriteByte(0xCC);
+    //WRITE SCRATCHPAD
+    ds18b20_WriteByte(0x4E);
+    //TH REGISTER 100 –≥—Ä–∞–¥—É—Å–æ–≤
+    ds18b20_WriteByte(0x64);
+    //TL REGISTER - 30 –≥—Ä–∞–¥—É—Å–æ–≤
+    ds18b20_WriteByte(0x9E);
+    //Resolution 12 bit
+    ds18b20_WriteByte(RESOLUTION_12BIT);
   }
   return 0;
 }
@@ -114,7 +118,7 @@ void ds18b20_ReadStratcpad(uint8_t mode, uint8_t *Data, uint8_t DevNum)
 
 uint8_t ds18b20_GetSign(uint16_t dt)
 {
-  //œÓ‚ÂËÏ 11-È ·ËÚ
+  //–ü—Ä–æ–≤–µ—Ä–∏–º 11-–π –±–∏—Ç
   if (dt & (1 << 11))
   {
     return 1;
@@ -129,9 +133,10 @@ float ds18b20_Convert(uint16_t dt)
 {
   float t;
 
-  t = (float) ((dt & 0x07FF) >> 4); //ÓÚ·ÓÓÒËÏ ÁÌ‡ÍÓ‚˚Â Ë ‰Ó·Ì˚Â ·ËÚ˚
-  //œË·‡‚ËÏ ‰Ó·ÌÛ˛ ˜‡ÒÚ¸
+  t = (float) ((dt & 0x07FF) >> 4); //–æ—Ç–±–æ—Ä–æ—Å–∏–º –∑–Ω–∞–∫–æ–≤—ã–µ –∏ –¥—Ä–æ–±–Ω—ã–µ –±–∏—Ç—ã
+  //–ü—Ä–∏–±–∞–≤–∏–º –¥—Ä–æ–±–Ω—É—é —á–∞—Å—Ç—å
   t += (float)(dt & 0x000F) / 16.0f;
+  
   return t;
 }
 

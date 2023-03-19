@@ -93,13 +93,13 @@ void enumeration(void)
 {
   for(uint16_t i = 0; i <= 1000; i += 2)
   {
-    setValue((i/100), 0);
+    setValue((i / 100), 0);
     DelayMicro(500);
-    setValue((i/100), 1);
+    setValue((i / 100), 1);
     DelayMicro(500);	
-    setValue((i/100), 2);
+    setValue((i / 100), 2);
     DelayMicro(500);
-    setValue((i/100), 3);
+    setValue((i / 100), 3);
     DelayMicro(500);
   }
 }

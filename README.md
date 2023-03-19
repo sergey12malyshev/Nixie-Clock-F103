@@ -1,6 +1,8 @@
 # Nixie-Clock-F103
 Nixie Clock project stm32f103 + ds18b20 + ИН-14
 
+Hardware-software project of a clock on nixies indicators with an temperature display
+
 Программно-аппаратный проект часов на газоразрядных индикаторах с функцией показа температуры
 
 <img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1677171791876.jpg" width=30% height=35%> <img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1677174372862.jpg" width=30% height=35%> <img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1670937612155.jpg" width=30% height=30%> 
@@ -52,6 +54,9 @@ TODO: Есть ли влияние WDT на батарейку? Пин VBAT пи
 Ток запятой: I = 0,73 В / 10 кОм = 0,07 мА
 
 Динамическая индикация
+
+## Code Style
+https://habr.com/ru/post/325678/
 
 ## Полезная информация
 https://narodstream.ru/stm-urok-92-datchik-temperatury-ds18b20-chast-3/ - работа с ds18b20

@@ -128,14 +128,14 @@ void time_out(void)
 void temper_out(void)   // выполняеться за 2 мс
 {
   int temper_int = temper * 100;	
-  setValue(temper_int/1000, 0);
+  setValue(temper_int / 1000, 0);
   DelayMicro(500);
-  setValue((temper_int/100)%10, 1);
+  setValue((temper_int / 100) % 10, 1);
   DelayMicro(500);	
-  setValue((temper_int/10)%10, 2);
+  setValue((temper_int / 10) % 10, 2);
   DelayMicro(500);
 #if 0
-  setValue(temper_int%10,3);
+  setValue(temper_int % 10, 3);
 #else
   setVoidPosition();  
 #endif
@@ -149,7 +149,7 @@ static void tempDataOutput(void)
   if (flag == false)   // 200-250 мС https://habr.com/ru/post/431868/
   {
     smooth_transition_time();
-	  flag = true;
+    flag = true;
   }
   else
   {
@@ -163,7 +163,7 @@ static void timeDataOutput(void)
   if (flag2 == false)   // 200-250 мС https://habr.com/ru/post/431868/
   {
     smooth_transition_temp();
-	  flag2 = true;
+    flag2 = true;
   }
   else time_out();
 }
@@ -174,10 +174,13 @@ static void checkButtonTemp(void)
 
   if((HAL_GetTick() - time_exti15_irq) > antiChatter_ms)
   {
-    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15)== 0) 
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == 0) 
     {
       smooth_transition_time();
-	    while (--timeDelay)	temper_out();
+      while (--timeDelay)
+      {
+        temper_out();
+      }
       smooth_transition_temp();
     }
 
@@ -192,7 +195,7 @@ static void checkButtonSetHours(void)
 {
   if((HAL_GetTick() - time_exti3_irq) > antiChatter_ms)
   {
-    if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3)== 0))
+    if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3) == 0))
     {
       RTC_Time.Hours++;
       HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
@@ -219,7 +222,7 @@ static void checkButtonSetMinutes(void)
       else
       {
         RTC_Time.Minutes = 0;
-	      HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
+        HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
       }
     } 
   
@@ -232,16 +235,16 @@ static void checkButtonSetMinutes(void)
 
 static void read_DS18b20_process(void)
 {
-	if (count_2ms == 1)
-	{
-		ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
-	}
-	else if (count_2ms == 430) 
-	{
-		ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
-		raw_temper = ((uint16_t)dt[1] << 8)|dt[0];
-		temper = ds18b20_Convert(raw_temper);
-	}
+  if (count_2ms == 1)
+  {
+    ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
+  }
+  else if (count_2ms == 430) 
+  {
+    ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
+    raw_temper = ((uint16_t)dt[1] << 8)|dt[0];
+    temper = ds18b20_Convert(raw_temper);
+  }
   else if (count_2ms == 500)
   {
 #if DEBUG
@@ -269,7 +272,7 @@ static void resetValue_count_2ms(void)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t status;
+  uint8_t status;
 
   /* USER CODE END 1 */
 
