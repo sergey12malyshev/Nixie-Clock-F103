@@ -2,7 +2,7 @@
 /**
   ******************************************************************************
   * @file           : main.c
-  * @brief          : Main program body
+  * @brief          : Main program body Nixe tube clock project
   ******************************************************************************
   ** This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -99,7 +99,7 @@ uint16_t raw_temper;
 
 static uint16_t count_2ms;
 
-const uint8_t softWare_version = 2;
+const uint8_t softWare_version = 3;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
