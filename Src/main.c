@@ -79,7 +79,7 @@ UART_HandleTypeDef huart1;
 RTC_DateTypeDef RTC_Date;                     
 RTC_TimeTypeDef RTC_Time;  
 
-bool flag, flag2 = false;
+bool flagDataOut, flagTempOut = false;
 
 bool setHoursButton = false;
 bool setMinitButton = false;
@@ -145,11 +145,11 @@ void temper_out(void)   // выполняеться за 2 мс
 
 static void tempDataOutput(void)  
 {
-  flag2 = false;
-  if (flag == false)   // 200-250 мС https://habr.com/ru/post/431868/
+  if (flagDataOut == false)   // 200-250 мС https://habr.com/ru/post/431868/
   {
     smooth_transition_time();
-    flag = true;
+    flagDataOut = true;
+    flagTempOut = false;
   }
   else
   {
@@ -159,14 +159,17 @@ static void tempDataOutput(void)
 
 static void timeDataOutput(void)  
 {
-  flag = false;
-  if (flag2 == false)   // 200-250 мС https://habr.com/ru/post/431868/
+  if (flagTempOut == false) 
   {
     smooth_transition_temp();
-    flag2 = true;
+    flagTempOut = true;
+    flagDataOut = false;
   }
-  else time_out();
-}
+  else
+  {
+    time_out();
+  }
+} 
 
 static void checkButtonTemp(void)  
 {
