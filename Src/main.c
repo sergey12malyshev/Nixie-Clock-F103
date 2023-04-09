@@ -44,10 +44,11 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <stdbool.h> 
+
 #include "driverNixeTube.h"
 #include "smooth.h"
 #include "ds18b20.h"
-
+#include "UART.h"
 
 /* USER CODE END Includes */
 
@@ -58,7 +59,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define BLOCK_DELAY_UART  50
 #define DEBUG             false
 /* USER CODE END PD */
 
@@ -198,7 +198,7 @@ static void checkButtonSetHours(void)
 {
   if((HAL_GetTick() - time_exti3_irq) > antiChatter_ms)
   {
-    if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_3) == 0))
+    if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == 0))
     {
       RTC_Time.Hours++;
       HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
@@ -252,11 +252,11 @@ static void read_DS18b20_process(void)
   {
 #if DEBUG
     sprintf(str1,"t,C: %f\r\n", temper);
-    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART);
+    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART_MS);
     sprintf(str1,"s: %d\r\n", RTC_Time.Seconds);
-    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART);
+    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART_MS);
     sprintf(str1,"s: %d\r\n", count_2ms);
-    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART);
+    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART_MS);
 #endif
   }
   count_2ms++;
@@ -302,14 +302,13 @@ int main(void)
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
 	
-  HAL_UART_Transmit(&huart1, (uint8_t*)hello_clock, 14, BLOCK_DELAY_UART);
-  sprintf(str1,"SoftWare ver.: %d\r\n", softWare_version);
-  HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART);
+  HAL_UART_Transmit(&huart1, (uint8_t*)hello_clock, 14, BLOCK_DELAY_UART_MS);
+  sendUART_SNversion();
 	
   port_init();
   status = ds18b20_init(SKIP_ROM);
   sprintf(str1,"Init Status ds18b20: %d\r\n", status);
-  HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART);
+  HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART_MS);
 	
   HAL_RTC_GetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
   hour = RTC_Time.Hours;

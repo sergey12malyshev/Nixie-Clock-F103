@@ -106,6 +106,11 @@ void Error_Handler(void);
 #define D10_Pin GPIO_PIN_6
 #define D10_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
+
+#define VERSION_MAJOR     0
+#define VERSION_MINOR     1
+#define VERSION_PATCH     1
+
 void temper_out(void);
 void time_out(void);
 /* USER CODE END Private defines */
