@@ -9,7 +9,8 @@ static uint8_t str[25];
 
 void sendUART(uint8_t TxBufferUartLocal[])
 { //передача в блокирующем режиме
-  HAL_UART_Transmit(&huart1, (uint8_t*) TxBufferUartLocal, strlen((char *) TxBufferUartLocal), BLOCK_DELAY_UART_MS);
+  const uint8_t blockDelayUART_ms = 50; //t(sec)=(FRAME/BOUND+MINT)*N = (10/115200+0.00001)*100 = 19 мс
+  HAL_UART_Transmit(&huart1, (uint8_t*) TxBufferUartLocal, strlen((char *) TxBufferUartLocal), blockDelayUART_ms);
 }
 
 void sendUART_SNversion(void)

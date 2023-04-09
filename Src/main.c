@@ -252,11 +252,11 @@ static void read_DS18b20_process(void)
   {
 #if DEBUG
     sprintf(str1,"t,C: %f\r\n", temper);
-    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART_MS);
+    sendUART((uint8_t *)str1);
     sprintf(str1,"s: %d\r\n", RTC_Time.Seconds);
-    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART_MS);
+    sendUART((uint8_t *)str1);
     sprintf(str1,"s: %d\r\n", count_2ms);
-    HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART_MS);
+    sendUART((uint8_t *)str1);
 #endif
   }
   count_2ms++;
@@ -302,13 +302,13 @@ int main(void)
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
 	
-  HAL_UART_Transmit(&huart1, (uint8_t*)hello_clock, 14, BLOCK_DELAY_UART_MS);
+  sendUART((uint8_t *)hello_clock);
   sendUART_SNversion();
 	
   port_init();
   status = ds18b20_init(SKIP_ROM);
   sprintf(str1,"Init Status ds18b20: %d\r\n", status);
-  HAL_UART_Transmit(&huart1, (uint8_t*)str1, strlen(str1), BLOCK_DELAY_UART_MS);
+  sendUART((uint8_t *)str1);
 	
   HAL_RTC_GetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
   hour = RTC_Time.Hours;
