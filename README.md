@@ -10,6 +10,12 @@ Hardware-software project of a clock on nixies indicators with an temperature di
 ## Инструментарий
 *Keil uVision v5* + *VS Code*
 
+### Статический анализатор кода
+Cppcheck 2.10 https://cppcheck.sourceforge.io/
+
+Запустить RunStaticAnalysisCODE.cmd
+
+Возможен вывод результата анализа в файл
 ## RTOS
 Нет. Суперцикл
 
