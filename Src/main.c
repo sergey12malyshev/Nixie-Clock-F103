@@ -49,6 +49,7 @@
 #include "smooth.h"
 #include "ds18b20.h"
 #include "UART.h"
+#include "hard.h"
 
 /* USER CODE END Includes */
 
@@ -266,6 +267,7 @@ static void resetValue_count_2ms(void)
 {
   count_2ms = 0;
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -373,8 +375,9 @@ int main(void)
       resetValue_count_2ms();
     }	
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
+
+    heartbeatDrive(RTC_Time.Seconds);
 
     HAL_IWDG_Refresh(&hiwdg);// 5 cекунд на зависание
   }

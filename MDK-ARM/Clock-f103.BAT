@@ -14,6 +14,7 @@ SET CPU_CLOCK=0x007A1200
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via "clock-f103\stm32f1xx_it.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via "clock-f103\stm32f1xx_hal_msp.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via "clock-f103\uart.__i"
+"C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via "clock-f103\hard.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via "clock-f103\system_stm32f1xx.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via "clock-f103\stm32f1xx_hal_gpio_ex.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via "clock-f103\stm32f1xx_hal_iwdg.__i"
