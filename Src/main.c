@@ -100,7 +100,6 @@ uint16_t raw_temper;
 
 static uint16_t count_2ms;
 
-const uint8_t softWare_version = 3;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
