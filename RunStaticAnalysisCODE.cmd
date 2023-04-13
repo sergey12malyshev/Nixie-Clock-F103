@@ -5,7 +5,7 @@ rem Гайд: https://habr.com/ru/articles/210256/
 @echo on
 
 rem вывод результата в консоль
-cppcheck -q -j4 --enable=all --inconclusive ./Src
+cppcheck -q -j4 --enable=all --inconclusive -I ./Inc ./Src
 rem вывод результата в файл
 rem cppcheck -q -j4 --enable=all --inconclusive --output-file=checkReport.txt  ./Src
 
