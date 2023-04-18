@@ -8,7 +8,11 @@ Hardware-software project of a clock on nixies indicators with an temperature di
 <img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1677171791876.jpg" width=30% height=35%> <img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1677174372862.jpg" width=30% height=35%> <img src="https://github.com/sergey12malyshev/Nixie-Clock-F103//raw/master/pictures/1670937612155.jpg" width=30% height=30%> 
 
 ## Инструментарий
-*Keil uVision v5* + *VS Code*
+### Компилятор
+*Keil uVision v5.30* 
+
+### Редактор кода
+*VS Code* файл Nixie-Clock-F103.code-workspace
 
 ### Статический анализатор кода
 Cppcheck 2.10 https://cppcheck.sourceforge.io/
@@ -16,10 +20,8 @@ Cppcheck 2.10 https://cppcheck.sourceforge.io/
 Запустить RunStaticAnalysisCODE.cmd
 
 Возможен вывод результата анализа в файл
-## RTOS
-Нет. Суперцикл
 
-## Сборка
+## Сборка 
 Запустить **BuildRun.cmd**
 
 ## Прошивка ПО
