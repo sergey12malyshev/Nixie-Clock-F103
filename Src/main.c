@@ -80,23 +80,20 @@ UART_HandleTypeDef huart1;
 RTC_DateTypeDef RTC_Date;                     
 RTC_TimeTypeDef RTC_Time;  
 
-bool flagDataOut, flagTempOut = false;
-
-bool setHoursButton = false;
-bool setMinitButton = false;
-bool timeSetButton = false;
 extern uint32_t time_exti3_irq;
 extern uint32_t time_exti15_irq; 
+
+static bool flagDataOut = false, flagTempOut = false;
+bool setHoursButton = false, setMinitButton = false, timeSetButton = false;
+
 const uint8_t antiChatter_ms = 45; // https://istarik.ru/blog/stm32/148.html
 
-uint8_t hour, minit, secund;
+static uint8_t hour, minit, secund;
 
-const uint8_t hello_clock []= "Hello Clock!\r\n";
-char str1[30];
+static const uint8_t hello_clock_str []= "Hello Clock!\r\n";
+static char bufUart[30];
 
-float temper;
-uint8_t dt[8];
-uint16_t raw_temper;
+static float temperature;
 
 static uint16_t count_2ms;
 
@@ -127,7 +124,7 @@ void time_out(void)
 
 void temper_out(void)   // выполняеться за 2 мс
 {
-  int temper_int = temper * 100;	
+  int temper_int = temperature * 100;	
   setValue(temper_int / 1000, 0);
   DelayMicro(500);
   setValue((temper_int / 100) % 10, 1);
@@ -236,6 +233,15 @@ static void checkButtonSetMinutes(void)
   }
 }
 
+static void DS18b20Convert(void)
+{
+  uint8_t dt[8];
+
+  ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
+  uint16_t raw_temper = ((uint16_t) dt[1] << 8) | dt[0];
+  temperature = ds18b20_Convert(raw_temper);
+}
+
 static void read_DS18b20_process(void)
 {
   if (count_2ms == 1)
@@ -244,19 +250,17 @@ static void read_DS18b20_process(void)
   }
   else if (count_2ms == 430) 
   {
-    ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
-    raw_temper = ((uint16_t)dt[1] << 8)|dt[0];
-    temper = ds18b20_Convert(raw_temper);
+    DS18b20Convert();
   }
   else if (count_2ms == 500)
   {
 #if DEBUG
-    sprintf(str1,"t,C: %f\r\n", temper);
-    sendUART((uint8_t *)str1);
-    sprintf(str1,"s: %d\r\n", RTC_Time.Seconds);
-    sendUART((uint8_t *)str1);
-    sprintf(str1,"s: %d\r\n", count_2ms);
-    sendUART((uint8_t *)str1);
+    sprintf(bufUart,"t,C: %f\r\n", temper);
+    sendUART((uint8_t *)bufUart);
+    sprintf(bufUart,"s: %d\r\n", RTC_Time.Seconds);
+    sendUART((uint8_t *)bufUart);
+    sprintf(bufUart,"s: %d\r\n", count_2ms);
+    sendUART((uint8_t *)bufUart);
 #endif
   }
   count_2ms++;
@@ -276,7 +280,6 @@ static void resetValue_count_2ms(void)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint8_t status;
 
   /* USER CODE END 1 */
 
@@ -303,13 +306,13 @@ int main(void)
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
 	
-  sendUART((uint8_t *)hello_clock);
+  sendUART((uint8_t *)hello_clock_str);
   sendUART_SNversion();
 	
   port_init();
-  status = ds18b20_init(SKIP_ROM);
-  sprintf(str1,"Init Status ds18b20: %d\r\n", status);
-  sendUART((uint8_t *)str1);
+  uint8_t status = ds18b20_init(SKIP_ROM);
+  sprintf(bufUart,"Init Status ds18b20: %d\r\n", status);
+  sendUART((uint8_t *)bufUart);
 	
   HAL_RTC_GetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
   hour = RTC_Time.Hours;
@@ -318,9 +321,7 @@ int main(void)
 		
   ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
   enumeration(); //delay min 750 мс
-  ds18b20_ReadStratcpad(SKIP_ROM, dt, 0);
-  raw_temper = ((uint16_t)dt[1]<<8)|dt[0];
-  temper = ds18b20_Convert(raw_temper);
+  DS18b20Convert();
 								
   /* USER CODE END 2 */
 

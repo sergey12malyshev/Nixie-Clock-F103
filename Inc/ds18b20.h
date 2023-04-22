@@ -6,13 +6,13 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define SKIP_ROM    0
-#define NO_SKIP_ROM 1
+#define SKIP_ROM            0u
+#define NO_SKIP_ROM         1u
 
-#define RESOLUTION_9BIT 0x1F
-#define RESOLUTION_10BIT 0x3F
-#define RESOLUTION_11BIT 0x5F
-#define RESOLUTION_12BIT 0x7F
+#define RESOLUTION_9BIT     0x1F
+#define RESOLUTION_10BIT    0x3F
+#define RESOLUTION_11BIT    0x5F
+#define RESOLUTION_12BIT    0x7F
 
 
 __STATIC_INLINE void DelayMicro(__IO uint32_t micros)

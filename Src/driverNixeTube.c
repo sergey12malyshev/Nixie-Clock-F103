@@ -19,7 +19,7 @@ static void setDecoderPosition(uint8_t dec0, uint8_t dec1, uint8_t dec2, uint8_t
   HAL_GPIO_WritePin(D4_GPIO_Port, D4_Pin, (GPIO_PinState) dec3);
 }
 
-static void setNumber(uint8_t number)
+static void setNumber(const uint8_t number)
 {
   switch(number)
   {
@@ -56,7 +56,7 @@ static void setNumber(uint8_t number)
   }
 }
 
-static void setPosition(uint8_t position)
+static void setPosition(const uint8_t position)
 {
   switch(position)
   {
