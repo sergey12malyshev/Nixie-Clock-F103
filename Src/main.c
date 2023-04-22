@@ -83,14 +83,12 @@ RTC_TimeTypeDef RTC_Time;
 extern uint32_t time_exti3_irq;
 extern uint32_t time_exti15_irq; 
 
-static bool flagDataOut = false, flagTempOut = false;
+static bool flagDataOut, flagTempOut;
 bool setHoursButton = false, setMinitButton = false, timeSetButton = false;
 
 const uint8_t antiChatter_ms = 45; // https://istarik.ru/blog/stm32/148.html
 
-static uint8_t hour, minit, secund;
-
-static const uint8_t hello_clock_str []= "Hello Clock!\r\n";
+static const uint8_t hello_clock_str[]= "**** Hello Clock! ****\r\n";
 static char bufUart[30];
 
 static float temperature;
@@ -112,13 +110,13 @@ static void MX_IWDG_Init(void);
 /* USER CODE BEGIN 0 */
 void time_out(void)
 {
-  setValue(hour / 10, 0);
+  setValue(RTC_Time.Hours / 10, 0);
   DelayMicro(500);
-  setValue(hour % 10, 1);
+  setValue(RTC_Time.Hours % 10, 1);
   DelayMicro(500);	
-  setValue(minit / 10, 2);
+  setValue(RTC_Time.Minutes / 10, 2);
   DelayMicro(500);
-  setValue(minit % 10, 3);
+  setValue(RTC_Time.Minutes % 10, 3);
   DelayMicro(500);	
 }
 
@@ -137,7 +135,6 @@ void temper_out(void)   // выполняеться за 2 мс
   setVoidPosition();  
 #endif
   DelayMicro(500);
-	
 }
 
 static void tempDataOutput(void)  
@@ -170,7 +167,7 @@ static void timeDataOutput(void)
 
 static void checkButtonTemp(void)  
 {
-  uint16_t timeDelay = 950;
+  uint16_t timeDelay = 950u;
 
   if((HAL_GetTick() - time_exti15_irq) > antiChatter_ms)
   {
@@ -195,7 +192,7 @@ static void checkButtonSetHours(void)
 {
   if((HAL_GetTick() - time_exti3_irq) > antiChatter_ms)
   {
-    if ((RTC_Time.Hours < 24)&&(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == 0))
+    if ((RTC_Time.Hours < 24u)&&(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == 0))
     {
       RTC_Time.Hours++;
       HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
@@ -214,7 +211,7 @@ static void checkButtonSetMinutes(void)
   {
     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14)== 0)
     {
-      if ((RTC_Time.Minutes < 59))
+      if ((RTC_Time.Minutes < 59u))
       {
         RTC_Time.Minutes++;
         HAL_RTC_SetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
@@ -313,16 +310,17 @@ int main(void)
   uint8_t status = ds18b20_init(SKIP_ROM);
   sprintf(bufUart,"Init Status ds18b20: %d\r\n", status);
   sendUART((uint8_t *)bufUart);
-	
+
   HAL_RTC_GetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
-  hour = RTC_Time.Hours;
-  minit = RTC_Time.Minutes;
-  secund = RTC_Time.Seconds;
-		
+  sendTimeUart();
+
   ds18b20_MeasureTemperCmd(SKIP_ROM, 0);
   enumeration(); //delay min 750 мс
   DS18b20Convert();
-								
+  sprintf(bufUart,"temperature: %3.4f\r\n", temperature);
+  sendUART((uint8_t *)bufUart);	
+  
+  sendAsciiGit();				
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -334,16 +332,12 @@ int main(void)
 *  - для работы необходимо закомментировать установку времени и даты - для сохранения данных при потере питания
 */		
 #if DATE
-    HAL_RTC_GetDate(&hrtc,&RTC_Date,RTC_FORMAT_BIN);
+    HAL_RTC_GetDate(&hrtc, &RTC_Date, RTC_FORMAT_BIN);
 #endif
-    HAL_RTC_GetTime(&hrtc,&RTC_Time,RTC_FORMAT_BIN);
- 	
-    hour = RTC_Time.Hours;
-    minit = RTC_Time.Minutes;
-    secund = RTC_Time.Seconds;
-		
-    if (((RTC_Time.Seconds > 0)&&(RTC_Time.Seconds < 5))||((RTC_Time.Seconds > 20) \
-    &&(RTC_Time.Seconds < 25))||((RTC_Time.Seconds > 40)&&(RTC_Time.Seconds < 45)))  
+    HAL_RTC_GetTime(&hrtc, &RTC_Time, RTC_FORMAT_BIN);
+ 			
+    if (((RTC_Time.Seconds > 0u)&&(RTC_Time.Seconds < 5u))||((RTC_Time.Seconds > 20u) \
+    &&(RTC_Time.Seconds < 25u))||((RTC_Time.Seconds > 40u)&&(RTC_Time.Seconds < 45u)))  
     {	
       tempDataOutput();  
     }
@@ -352,21 +346,21 @@ int main(void)
       timeDataOutput();  
     }
 				
-    if (timeSetButton == true)  // показ температуры
+    if (timeSetButton)  // показ температуры
     { 
       checkButtonTemp();  
     }	
-    if (setMinitButton == true) // установка минут
+    if (setMinitButton) // установка минут
     { 
       checkButtonSetMinutes();
     }
-    if (setHoursButton == true)  // установка часов
+    if (setHoursButton)  // установка часов
     { 
       checkButtonSetHours();
     }
 			
 	  /* Чтение датчика температуры происходит три раза в минуту */		
-    if ((RTC_Time.Seconds == 19)||(RTC_Time.Seconds == 39)||(RTC_Time.Seconds == 59))
+    if ((RTC_Time.Seconds == 19u)||(RTC_Time.Seconds == 39u)||(RTC_Time.Seconds == 59u))
     {
       read_DS18b20_process();
     }
@@ -379,7 +373,7 @@ int main(void)
 
     heartbeatDrive(RTC_Time.Seconds);
 
-    HAL_IWDG_Refresh(&hiwdg);// 5 cекунд на зависание
+    HAL_IWDG_Refresh(&hiwdg); // 5 cекунд на зависание
   }
   /* USER CODE END 3 */
 }
@@ -630,7 +624,9 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-
+#if DEBUG
+  sendUART("HAL_Error!");
+#endif
   /* USER CODE END Error_Handler_Debug */
 }
 

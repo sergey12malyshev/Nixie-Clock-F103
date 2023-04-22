@@ -109,7 +109,7 @@ void Error_Handler(void);
 
 #define VERSION_MAJOR     0
 #define VERSION_MINOR     1
-#define VERSION_PATCH     1
+#define VERSION_PATCH     2
 
 void temper_out(void);
 void time_out(void);
